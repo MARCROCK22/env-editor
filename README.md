@@ -1,3 +1,3 @@
-# Cat Customs - Custom Editor API Samples
+# Env editor
 
 ![Env editor](./docs/example.png)

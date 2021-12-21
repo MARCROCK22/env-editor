@@ -5,6 +5,10 @@
 	"version": "0.0.1",
 	"publisher": "MARCROCK22",
 	"private": false,
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/MARCROCK22/env-editor.git"
+	},
 	"license": "MIT",
 	"engines": {
 		"vscode": "^1.52.0"

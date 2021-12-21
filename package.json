@@ -1,0 +1,50 @@
+{
+	"name": "env-editor",
+	"displayName": ".env editor",
+	"description": "Custom .env Editor",
+	"version": "0.0.1",
+	"publisher": "MARCROCK22",
+	"private": false,
+	"license": "MIT",
+	"engines": {
+		"vscode": "^1.52.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onCustomEditor:uwu.env"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"customEditors": [
+			{
+				"viewType": "uwu.env",
+				"displayName": "Env Editor",
+				"selector": [
+					{
+						"filenamePattern": "*.env"
+					}
+				]
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint . --ext .ts,.tsx",
+		"watch": "tsc -w -p ./"
+	},
+	"devDependencies": {
+		"@types/dotenv": "^8.2.0",
+		"@types/node": "^12.12.0",
+		"@types/vscode": "^1.52.0",
+		"@typescript-eslint/eslint-plugin": "^4.16.0",
+		"@typescript-eslint/parser": "^4.16.0",
+		"eslint": "^7.21.0",
+		"typescript": "^4.4.3"
+	},
+	"dependencies": {
+		"dotenv": "^10.0.0"
+	}
+}

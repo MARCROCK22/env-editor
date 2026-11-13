@@ -1,8 +1,8 @@
 {
 	"name": "env-editor",
 	"displayName": ".env editor",
-	"description": "Hides .env values in the editor, with Show/Hide buttons",
-	"version": "0.1.1",
+	"description": "Edit .env files with every value hidden: Show/Hide per variable, Show all / Hide all",
+	"version": "0.2.0",
 	"publisher": "MARCROCK22",
 	"icon": "images/icon.png",
 	"galleryBanner": {
@@ -31,6 +31,21 @@
 		}
 	},
 	"contributes": {
+		"customEditors": [
+			{
+				"viewType": "uwu.env",
+				"displayName": ".env editor",
+				"selector": [
+					{
+						"filenamePattern": "*.env"
+					},
+					{
+						"filenamePattern": ".env.*"
+					}
+				],
+				"priority": "default"
+			}
+		],
 		"grammars": [
 			{
 				"scopeName": "env-editor.mask",
@@ -70,6 +85,7 @@
 	"main": "./out/extension.js",
 	"files": [
 		"out/*.js",
+		"media/*",
 		"CHANGELOG.md",
 		"images/icon.png",
 		"syntaxes/mask.injection.json"

@@ -1,8 +1,8 @@
 {
 	"name": "env-editor",
 	"displayName": ".env editor",
-	"description": "Custom .env Editor",
-	"version": "0.0.1",
+	"description": "Hides .env values in the editor, with Show/Hide buttons",
+	"version": "0.1.0",
 	"publisher": "MARCROCK22",
 	"private": false,
 	"repository": {
@@ -11,44 +11,45 @@
 	},
 	"license": "MIT",
 	"engines": {
-		"vscode": "^1.52.0"
+		"vscode": "^1.146.0"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
-		"onCustomEditor:uwu.env"
+		"onLanguage:dotenv",
+		"onStartupFinished"
 	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"customEditors": [
-			{
-				"viewType": "uwu.env",
-				"displayName": "Env Editor",
-				"selector": [
-					{
-						"filenamePattern": "*.env"
-					}
-				]
-			}
-		]
+	"capabilities": {
+		"untrustedWorkspaces": {
+			"supported": true
+		}
 	},
+	"contributes": {
+		"configurationDefaults": {
+			"[dotenv]": {
+				"editor.wordBasedSuggestions": "off",
+				"editor.find.seedSearchStringFromSelection": "never"
+			}
+		}
+	},
+	"main": "./out/extension.js",
+	"files": [
+		"out/*.js",
+		"CHANGELOG.md"
+	],
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
 		"compile": "tsc -p ./",
-		"lint": "eslint . --ext .ts,.tsx",
+		"lint": "eslint src test",
+		"test": "npm run compile && node --test",
 		"watch": "tsc -w -p ./"
 	},
 	"devDependencies": {
-		"@types/dotenv": "^8.2.0",
-		"@types/node": "^12.12.0",
-		"@types/vscode": "^1.52.0",
-		"@typescript-eslint/eslint-plugin": "^4.16.0",
-		"@typescript-eslint/parser": "^4.16.0",
-		"eslint": "^7.21.0",
-		"typescript": "^4.4.3"
-	},
-	"dependencies": {
-		"dotenv": "^10.0.0"
+		"@eslint/js": "^10.0.1",
+		"@types/vscode": "^1.146.0",
+		"eslint": "^10.14.0",
+		"typescript": "~6.0.3",
+		"typescript-eslint": "^8.72.2"
 	}
 }

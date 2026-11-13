@@ -17,6 +17,7 @@ test('findValues hides what dotenv reads as a value, plus commented-out variable
 		'# NOT_A_VAR=inside a value',
 		'line2"',
 		'URL = https://x.y/z?a=1  ',
+		'MY KEY=spaced key',
 	];
 	for (const eol of ['\n', '\r\n']) {
 		const text = lines.join(eol);
@@ -31,6 +32,7 @@ test('findValues hides what dotenv reads as a value, plus commented-out variable
 			['COLON', 'value'],
 			['MULTI', ['"line1', '# NOT_A_VAR=inside a value', 'line2"'].join(eol)],
 			['URL', 'https://x.y/z?a=1'],
+			['MY KEY', 'spaced key'],
 		]);
 	}
 });

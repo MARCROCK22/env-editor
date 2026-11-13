@@ -18,6 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
 	// The hidden text keeps its width; a zero-width `before` paints one dot per character over it.
 	const mask = vscode.window.createTextEditorDecorationType({ opacity: '0' });
 	const dotColor = new vscode.ThemeColor('editor.foreground');
+	// package.json makes dotenv value tokens transparent so nothing shows before this code runs: revealed values need a color back.
+	const reveal = vscode.window.createTextEditorDecorationType({ color: dotColor });
 	const lensesChanged = new vscode.EventEmitter<void>();
 	const showAll = vscode.window.createStatusBarItem('envEditor.showAll', vscode.StatusBarAlignment.Right);
 	const hideAll = vscode.window.createStatusBarItem('envEditor.hideAll', vscode.StatusBarAlignment.Right);
@@ -31,9 +33,13 @@ export function activate(context: vscode.ExtensionContext) {
 	function decorate(editor: vscode.TextEditor) {
 		const doc = editor.document;
 		const options: vscode.DecorationOptions[] = [];
+		const shown: vscode.Range[] = [];
 		for (const v of isEnv(doc) ? findValues(doc.getText()) : []) {
-			if (isShown(doc, v.key)) continue;
 			const value = new vscode.Range(doc.positionAt(v.start), doc.positionAt(v.end));
+			if (isShown(doc, v.key)) {
+				shown.push(value);
+				continue;
+			}
 			// One segment per line, so multiline values (private keys...) are dotted on every line.
 			for (let line = value.start.line; line <= value.end.line; line++) {
 				const range = doc.lineAt(line).range.intersection(value);
@@ -44,6 +50,7 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 		}
 		editor.setDecorations(mask, options);
+		editor.setDecorations(reveal, shown);
 	}
 
 	function refresh() {
@@ -68,7 +75,7 @@ export function activate(context: vscode.ExtensionContext) {
 	}
 
 	context.subscriptions.push(
-		mask, lensesChanged, showAll, hideAll,
+		mask, reveal, lensesChanged, showAll, hideAll,
 		vscode.languages.registerCodeLensProvider(selector, {
 			onDidChangeCodeLenses: lensesChanged.event,
 			provideCodeLenses: doc => findValues(doc.getText()).map(v => {

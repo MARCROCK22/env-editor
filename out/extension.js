@@ -50,6 +50,8 @@ function activate(context) {
     // The hidden text keeps its width; a zero-width `before` paints one dot per character over it.
     const mask = vscode.window.createTextEditorDecorationType({ opacity: '0' });
     const dotColor = new vscode.ThemeColor('editor.foreground');
+    // package.json makes dotenv value tokens transparent so nothing shows before this code runs: revealed values need a color back.
+    const reveal = vscode.window.createTextEditorDecorationType({ color: dotColor });
     const lensesChanged = new vscode.EventEmitter();
     const showAll = vscode.window.createStatusBarItem('envEditor.showAll', vscode.StatusBarAlignment.Right);
     const hideAll = vscode.window.createStatusBarItem('envEditor.hideAll', vscode.StatusBarAlignment.Right);
@@ -62,10 +64,13 @@ function activate(context) {
     function decorate(editor) {
         const doc = editor.document;
         const options = [];
+        const shown = [];
         for (const v of isEnv(doc) ? (0, parse_1.findValues)(doc.getText()) : []) {
-            if (isShown(doc, v.key))
-                continue;
             const value = new vscode.Range(doc.positionAt(v.start), doc.positionAt(v.end));
+            if (isShown(doc, v.key)) {
+                shown.push(value);
+                continue;
+            }
             // One segment per line, so multiline values (private keys...) are dotted on every line.
             for (let line = value.start.line; line <= value.end.line; line++) {
                 const range = doc.lineAt(line).range.intersection(value);
@@ -76,6 +81,7 @@ function activate(context) {
             }
         }
         editor.setDecorations(mask, options);
+        editor.setDecorations(reveal, shown);
     }
     function refresh() {
         vscode.window.visibleTextEditors.forEach(decorate);
@@ -98,7 +104,7 @@ function activate(context) {
             state.set(doc.uri.toString(), { allShown, toggled: new Set() });
         revealChanged();
     }
-    context.subscriptions.push(mask, lensesChanged, showAll, hideAll, vscode.languages.registerCodeLensProvider(selector, {
+    context.subscriptions.push(mask, reveal, lensesChanged, showAll, hideAll, vscode.languages.registerCodeLensProvider(selector, {
         onDidChangeCodeLenses: lensesChanged.event,
         provideCodeLenses: doc => (0, parse_1.findValues)(doc.getText()).map(v => {
             const at = doc.positionAt(v.start);

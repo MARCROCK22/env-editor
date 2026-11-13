@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Values no longer flash in clear for a moment when a `.env` file is opened or its tab is shown again. Right after VS Code starts they can still show briefly, until syntax highlighting is ready.
+- New icon.
+
 ## 0.1.0
 
 - `.env` files now open in the normal text editor with their values hidden. Use **Show / Hide** above each variable, or **Show all / Hide all** in the status bar.

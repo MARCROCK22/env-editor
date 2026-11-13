@@ -1,0 +1,14 @@
+{
+	"scopeName": "env-editor.mask",
+	"injectionSelector": "L:source.dotenv",
+	"patterns": [
+		{
+			"comment": "Commented-out variable (# KEY=value): scope its value like a real one, so package.json hides it before the extension starts",
+			"match": "^(\\s*#+\\s*(?:export\\s+)?[\\w.-]+\\s*=)(.*)$",
+			"captures": {
+				"1": { "name": "comment.line.dotenv" },
+				"2": { "name": "property.value.dotenv" }
+			}
+		}
+	]
+}

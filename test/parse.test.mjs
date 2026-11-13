@@ -1,6 +1,24 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { findValues } from '../out/parse.js';
+import { decode, encode, findValues, findVariables } from '../out/parse.js';
+
+test('findVariables lists the active variables once each, empty ones included', () => {
+	const text = ['A=1', 'EMPTY=', 'KEY= # only a comment', '#OLD=x', 'export B="two words"'].join('\n');
+	assert.deepStrictEqual(findVariables(text).map(v => [v.key, text.slice(v.start, v.end)]), [
+		['A', '1'],
+		['EMPTY', ''],
+		['KEY', ''],
+		['B', '"two words"'],
+	]);
+});
+
+test('encode writes values that dotenv reads back unchanged', () => {
+	for (const value of ['', 'plain', 'a b', ' padded ', 'ab#cd', "it's", 'say "hi"', 'multi\nline', 'back\\slash', "`tick` and 'quote'"]) {
+		const text = `KEY=${encode(value)}\nNEXT=1`;
+		const [v] = findVariables(text);
+		assert.strictEqual(decode(text.slice(v.start, v.end)), value, JSON.stringify(value));
+	}
+});
 
 test('findValues hides what dotenv reads as a value, plus commented-out variables', () => {
 	const lines = [
@@ -17,6 +35,7 @@ test('findValues hides what dotenv reads as a value, plus commented-out variable
 		'# NOT_A_VAR=inside a value',
 		'line2"',
 		'URL = https://x.y/z?a=1  ',
+		'MY KEY=spaced key',
 	];
 	for (const eol of ['\n', '\r\n']) {
 		const text = lines.join(eol);
@@ -31,6 +50,7 @@ test('findValues hides what dotenv reads as a value, plus commented-out variable
 			['COLON', 'value'],
 			['MULTI', ['"line1', '# NOT_A_VAR=inside a value', 'line2"'].join(eol)],
 			['URL', 'https://x.y/z?a=1'],
+			['MY KEY', 'spaced key'],
 		]);
 	}
 });

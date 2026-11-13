@@ -1,9 +1,14 @@
 {
 	"name": "env-editor",
 	"displayName": ".env editor",
-	"description": "Hides .env values in the editor, with Show/Hide buttons",
-	"version": "0.1.0",
+	"description": "Edit .env files with every value hidden: Show/Hide per variable, Show all / Hide all",
+	"version": "0.2.0",
 	"publisher": "MARCROCK22",
+	"icon": "images/icon.png",
+	"galleryBanner": {
+		"color": "#1e2327",
+		"theme": "dark"
+	},
 	"private": false,
 	"repository": {
 		"type": "git",
@@ -26,17 +31,64 @@
 		}
 	},
 	"contributes": {
+		"customEditors": [
+			{
+				"viewType": "uwu.env",
+				"displayName": ".env editor",
+				"selector": [
+					{
+						"filenamePattern": "*.env"
+					},
+					{
+						"filenamePattern": ".env.*"
+					}
+				],
+				"priority": "default"
+			}
+		],
+		"grammars": [
+			{
+				"scopeName": "env-editor.mask",
+				"path": "./syntaxes/mask.injection.json",
+				"injectTo": [
+					"source.dotenv"
+				]
+			}
+		],
 		"configurationDefaults": {
 			"[dotenv]": {
 				"editor.wordBasedSuggestions": "off",
 				"editor.find.seedSearchStringFromSelection": "never"
+			},
+			"editor.tokenColorCustomizations": {
+				"[*]": {
+					"textMateRules": [
+						{
+							"scope": [
+								"property.value.dotenv",
+								"string.quoted.double.dotenv",
+								"string.quoted.single.dotenv",
+								"constant.character.escape.dotenv",
+								"variable.interpolation.dotenv",
+								"keyword.interpolation.begin.dotenv",
+								"keyword.interpolation.end.dotenv"
+							],
+							"settings": {
+								"foreground": "#00000000"
+							}
+						}
+					]
+				}
 			}
 		}
 	},
 	"main": "./out/extension.js",
 	"files": [
 		"out/*.js",
-		"CHANGELOG.md"
+		"media/*",
+		"CHANGELOG.md",
+		"images/icon.png",
+		"syntaxes/mask.injection.json"
 	],
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
